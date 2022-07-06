@@ -4,5 +4,5 @@ require_relative "exfuz/version"
 
 module Exfuz
   class Error < StandardError; end
-  # Your code goes here...
+  autoload :Parser, 'exfuz/parser'
 end
