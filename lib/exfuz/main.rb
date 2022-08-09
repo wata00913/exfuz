@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'curses'
+require 'timeout'
 require_relative 'parser'
 
 $num_finished_loading_file = 0
@@ -58,8 +59,17 @@ def main
       end
       in_t.name = 'wating_for_input'
     end
-    ch = Curses.getch
-    caret[1] += 1
+
+    ch = ''
+    begin
+      Timeout.timeout(0.01) do
+        ch = Curses.getch
+      end
+      caret[1] += 1
+    rescue TimeoutError
+      ch = ''
+    end
+
     case ch
     when 'q'
       break
