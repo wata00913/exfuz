@@ -36,9 +36,23 @@ def read_data(xlsxs, data = [])
   end
 end
 
+def start_fuzzy_finder(candidates)
+  cmds = %w[fzf]
+
+  stdio = IO.popen(cmds, 'r+')
+  stdio.puts candidates.pop until candidates.empty?
+  stdio.close_write
+
+  selected = stdio.read
+  stdio.close_read
+  selected
+end
+
 def main
   xlsxs = Dir.glob('**/*.xlsx')
   init_display($num_finished_loading_file, xlsxs.size)
+  Curses.close_screen
+  init_display(0, xlsxs.size)
 
   data = []
   #read_data(xlsxs, data)
@@ -73,6 +87,12 @@ def main
     case ch
     when 'q'
       break
+    when 'f'
+      selected = start_fuzzy_finder(data)
+      # 別プロセスでTUIを起動すると端末が初期化されない。
+      # Curses.close_screenで端末の状態を復帰させ、始めから描画させる必要がある
+      Curses.close_screen
+      init_display($num_finished_loading_file, xlsxs.size)
     end
   end
 end
