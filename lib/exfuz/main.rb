@@ -59,7 +59,7 @@ def start_fuzzy_finder(candidates)
   end
   stdio.close_write
 
-  selected = stdio.read
+  selected = stdio.read.chomp
   stdio.close_read
   selected
 end
