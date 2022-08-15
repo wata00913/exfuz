@@ -41,7 +41,7 @@ def start_fuzzy_finder(candidates)
 
   stdio = IO.popen(cmds, 'r+')
   candidates.each do |c|
-    stdio.puts c
+    stdio.puts c.values.join(':')
   end
   stdio.close_write
 
