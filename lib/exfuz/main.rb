@@ -40,7 +40,9 @@ def start_fuzzy_finder(candidates)
   cmds = %w[fzf]
 
   stdio = IO.popen(cmds, 'r+')
-  stdio.puts candidates.pop until candidates.empty?
+  candidates.each do |c|
+    stdio.puts c
+  end
   stdio.close_write
 
   selected = stdio.read
