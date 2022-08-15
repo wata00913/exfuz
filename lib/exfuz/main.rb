@@ -36,6 +36,20 @@ def read_data(xlsxs, data = [])
   end
 end
 
+def which(candidates, line, current_idx = 0, sep: ':')
+  return candidates[0] if candidates.size == 1
+
+  keys = %i[book_name sheet_name cell]
+  current_key = keys[current_idx]
+  filtered = candidates.select do |c|
+    c[current_key] == line.split(sep)[current_idx]
+  end
+
+  return filtered[0] if current_idx == 2
+
+  which(filtered, line, current_idx + 1)
+end
+
 def start_fuzzy_finder(candidates)
   cmds = %w[fzf]
 
@@ -90,7 +104,8 @@ def main
     when 'q'
       break
     when 'f'
-      selected = start_fuzzy_finder(data)
+      line = start_fuzzy_finder(data)
+      selected = which(data, line)
       # 別プロセスでTUIを起動すると端末が初期化されない。
       # Curses.close_screenで端末の状態を復帰させ、始めから描画させる必要がある
       Curses.close_screen
