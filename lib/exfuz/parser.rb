@@ -19,7 +19,7 @@ module Exfuz
 
     def parse
       @book = Xsv.open(@absolute_path)
-      @sheet_names = @book.sheets.map(&:name)
+      @sheet_names = @book.sheets.map { |s| s.name.force_encoding(Encoding::UTF_8) }
     end
 
     def book_name
