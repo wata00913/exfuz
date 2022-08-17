@@ -53,14 +53,16 @@ end
 def start_fuzzy_finder(candidates)
   cmds = %w[fzf]
 
-  stdio = IO.popen(cmds, 'r+')
-  candidates.each do |c|
-    stdio.puts c.values.join(':')
+  begin
+    stdio = IO.popen(cmds, 'r+')
+    candidates.each do |c|
+      stdio.puts c.values.join(':')
+    end
+  ensure
+    stdio.close_write
+    selected = stdio.read.chomp
+    stdio.close_read
   end
-  stdio.close_write
-
-  selected = stdio.read.chomp
-  stdio.close_read
   selected
 end
 
