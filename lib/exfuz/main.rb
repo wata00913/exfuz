@@ -71,7 +71,6 @@ def main
   init_display(0, xlsxs.size)
 
   data = []
-  #read_data(xlsxs, data)
   Thread.new do
     read_data(xlsxs, data)
   end
