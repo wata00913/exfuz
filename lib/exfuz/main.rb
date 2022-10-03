@@ -74,6 +74,7 @@ def main
 
   data = []
   Thread.new do
+    sleep 0.01
     read_data(xlsxs, data)
   end
 
@@ -93,7 +94,7 @@ def main
 
     ch = ''
     begin
-      Timeout.timeout(0.01) do
+      Timeout.timeout(0.1) do
         ch = Curses.getch
       end
       caret[1] += 1
