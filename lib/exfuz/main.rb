@@ -108,9 +108,7 @@ def main
     when 'f'
       line = start_fuzzy_finder(data)
       selected = which(data, line)
-      # 別プロセスでTUIを起動すると端末が初期化されない。
-      # Curses.close_screenで端末の状態を復帰させ、始めから描画させる必要がある
-      Curses.close_screen
+      Curses.clear
       init_display($num_finished_loading_file, xlsxs.size)
     end
   end
