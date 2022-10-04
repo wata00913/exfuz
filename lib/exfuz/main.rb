@@ -55,8 +55,8 @@ def start_fuzzy_finder(candidates)
 
   begin
     stdio = IO.popen(cmds, 'r+')
-    candidates.each do |c|
-      stdio.puts c.values.join(':')
+    candidates.each_with_index do |c, idx|
+      stdio.puts "#{idx + 1}:#{c.values.join(':')}"
     end
   ensure
     stdio.close_write
