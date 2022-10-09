@@ -36,18 +36,9 @@ def read_data(xlsxs, data = [])
   end
 end
 
-def which(candidates, line, current_idx = 0, sep: ':')
-  return candidates[0] if candidates.size == 1
-
-  keys = %i[book_name sheet_name cell]
-  current_key = keys[current_idx]
-  filtered = candidates.select do |c|
-    c[current_key] == line.split(sep)[current_idx]
-  end
-
-  return filtered[0] if current_idx == 2
-
-  which(filtered, line, current_idx + 1)
+def candidate_by(candidates, line, sep: ':')
+  lnum = line.split(sep)[0]
+  candidates[lnum.to_i - 1]
 end
 
 def start_fuzzy_finder(candidates)
@@ -107,7 +98,7 @@ def main
       break
     when 'f'
       line = start_fuzzy_finder(data)
-      selected = which(data, line)
+      selected = candidate_by(data, line)
       Curses.clear
       init_display($num_finished_loading_file, xlsxs.size)
     end
