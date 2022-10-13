@@ -3,6 +3,8 @@
 require 'curses'
 require 'timeout'
 require_relative 'parser'
+require_relative 'candidate'
+require_relative 'cell'
 
 $num_finished_loading_file = 0
 
@@ -30,8 +32,12 @@ def read_data(xlsxs, data = [])
     p = Exfuz::Parser.new(xlsx)
     p.parse
     p.each_cell_with_all do |cell|
-      data << cell
+      c = Exfuz::Cell.new(address: cell[:cell], value: cell[:value])
+      data << Exfuz::Candidate.new(book_name: cell[:book_name],
+                                   sheet_name: cell[:sheet_name],
+                                   textable: c)
     end
+
     $num_finished_loading_file = idx + 1
   end
 end
@@ -47,7 +53,7 @@ def start_fuzzy_finder(candidates)
   begin
     stdio = IO.popen(cmds, 'r+')
     candidates.each_with_index do |c, idx|
-      stdio.puts "#{idx + 1}:#{c.values.join(':')}"
+      stdio.puts "#{idx + 1}:#{c.to_s}"
     end
   ensure
     stdio.close_write
