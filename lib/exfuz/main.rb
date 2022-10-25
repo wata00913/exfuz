@@ -5,30 +5,11 @@ require 'timeout'
 require_relative 'parser'
 require_relative 'candidate'
 require_relative 'cell'
+require_relative 'screen'
+require_relative 'status'
 
-$num_finished_loading_file = 0
-
-def init_display(finished, max)
-  Curses.init_screen
-  status = "[#{finished}/#{max}]"
-  col = Curses.cols - status.length
-  Curses.setpos(0, col)
-  Curses.addstr(status)
-  Curses.setpos(0, 0)
-  Curses.refresh
-end
-
-def my_refresh(finished, max, caret)
-  status = "[#{finished}/#{max}]"
-  col = Curses.cols - status.length
-  Curses.setpos(0, col)
-  Curses.addstr(status)
-  Curses.setpos(0, caret[1])
-  Curses.refresh
-end
-
-def read_data(xlsxs, data = [])
-  xlsxs.each_with_index do |xlsx, idx|
+def read_data(xlsxs, data = [], status)
+  xlsxs.each_with_index do |xlsx, _idx|
     p = Exfuz::Parser.new(xlsx)
     p.parse
     p.each_cell_with_all do |cell|
@@ -38,7 +19,7 @@ def read_data(xlsxs, data = [])
                                    textable: c)
     end
 
-    $num_finished_loading_file = idx + 1
+    status.update(1)
   end
 end
 
@@ -53,7 +34,7 @@ def start_fuzzy_finder(candidates)
   begin
     stdio = IO.popen(cmds, 'r+')
     candidates.each_with_index do |c, idx|
-      stdio.puts "#{idx + 1}:#{c.to_s}"
+      stdio.puts "#{idx + 1}:#{c}"
     end
   ensure
     stdio.close_write
@@ -65,26 +46,25 @@ end
 
 def main
   xlsxs = Dir.glob('**/*.xlsx')
-  init_display($num_finished_loading_file, xlsxs.size)
+
+  status = Exfuz::Status.new(xlsxs.size)
+  caret = [0, 0]
+  screen = Exfuz::Screen.new(status, caret)
+
+  screen.init
   Curses.close_screen
-  init_display(0, xlsxs.size)
+  screen.init
 
   data = []
   Thread.new do
     sleep 0.01
-    read_data(xlsxs, data)
+    read_data(xlsxs, data, status)
   end
 
-  # 入力
-  caret = [0, 0]
-  last = $num_finished_loading_file
   loop do
     unless Thread.list.find { |t| t.name == 'wating_for_input' }
       in_t = Thread.new do
-        if last < $num_finished_loading_file
-          last = $num_finished_loading_file
-          my_refresh($num_finished_loading_file, xlsxs.size, caret)
-        end
+        screen.rerender if screen.changed_state?
       end
       in_t.name = 'wating_for_input'
     end
@@ -106,7 +86,7 @@ def main
       line = start_fuzzy_finder(data)
       selected = candidate_by(data, line)
       Curses.clear
-      init_display($num_finished_loading_file, xlsxs.size)
+      screen.init
     end
   end
 end
