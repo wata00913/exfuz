@@ -7,6 +7,9 @@ require_relative 'candidate'
 require_relative 'cell'
 require_relative 'screen'
 require_relative 'status'
+require_relative 'key_map'
+require_relative 'event'
+require_relative 'fuzzy_finder_command'
 
 def read_data(xlsxs, data = [], status)
   xlsxs.each_with_index do |xlsx, _idx|
@@ -28,34 +31,21 @@ def candidate_by(candidates, line, sep: ':')
   candidates[lnum.to_i - 1]
 end
 
-def start_fuzzy_finder(candidates)
-  cmds = %w[fzf]
-
-  begin
-    stdio = IO.popen(cmds, 'r+')
-    candidates.each_with_index do |c, idx|
-      stdio.puts "#{idx + 1}:#{c}"
-    end
-  ensure
-    stdio.close_write
-    selected = stdio.read.chomp
-    stdio.close_read
-  end
-  selected
-end
-
 def main
   xlsxs = Dir.glob('**/*.xlsx')
 
   status = Exfuz::Status.new(xlsxs.size)
+  data = []
+  cmd = Exfuz::FuzzyFinderCommand.new(data)
+  key_map = Exfuz::KeyMap.new
+  key_map.add_event_handler('f', cmd, func: :run)
   caret = [0, 0]
-  screen = Exfuz::Screen.new(status, caret)
+  screen = Exfuz::Screen.new(status, caret, key_map)
 
   screen.init
   Curses.close_screen
   screen.init
 
-  data = []
   Thread.new do
     sleep 0.01
     read_data(xlsxs, data, status)
@@ -69,25 +59,8 @@ def main
       in_t.name = 'wating_for_input'
     end
 
-    ch = ''
-    begin
-      Timeout.timeout(0.1) do
-        ch = Curses.getch
-      end
-      caret[1] += 1
-    rescue TimeoutError
-      ch = ''
-    end
-
-    case ch
-    when 'q'
-      break
-    when 'f'
-      line = start_fuzzy_finder(data)
-      selected = candidate_by(data, line)
-      Curses.clear
-      screen.init
-    end
+    screen.wait_input
+    break if screen.closed?
   end
 end
 

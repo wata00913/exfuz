@@ -4,10 +4,11 @@ require 'curses'
 
 module Exfuz
   class Screen
-    def initialize(status = nil, caret = nil)
+    def initialize(status = nil, caret = nil, key_map = nil)
       @caret = caret || [0, 0]
       @status = status
       @prev_loaded = @status.loaded
+      @key_map = key_map
     end
 
     def status
@@ -16,6 +17,8 @@ module Exfuz
 
     def init
       Curses.init_screen
+      # 入力の待機時間(milliseconds)
+      Curses.timeout = 100
       draw
       Curses.refresh
     end
@@ -30,8 +33,11 @@ module Exfuz
       Curses.refresh
     end
 
-    def handle_input
+    def wait_input
       @ch = Curses.getch
+      # 待機時間内に入力されない場合
+      return unless @ch
+
       # イベント内の処理で描画する場合があるためキャレットの更新を先に行う
       @caret[1] += 1
       handle_event(@ch)
@@ -53,9 +59,13 @@ module Exfuz
     private
 
     def handle_event(ch)
+      @key_map.pressed(ch)
       case ch
       when 'q'
         close
+      when 'f'
+        Curses.clear
+        init
       end
     end
 
