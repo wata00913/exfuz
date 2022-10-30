@@ -38,7 +38,7 @@ def main
   data = []
   cmd = Exfuz::FuzzyFinderCommand.new(data)
   key_map = Exfuz::KeyMap.new
-  key_map.add_event_handler('f', cmd, func: :run)
+  key_map.add_event_handler(Exfuz::Key::CTRL_R, cmd, func: :run)
   caret = [0, 0]
   screen = Exfuz::Screen.new(status, caret, key_map)
 

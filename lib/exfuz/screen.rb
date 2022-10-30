@@ -61,9 +61,9 @@ module Exfuz
     def handle_event(ch)
       @key_map.pressed(ch)
       case ch
-      when 'q'
+      when Exfuz::Key::CTRL_E
         close
-      when 'f'
+      when Exfuz::Key::CTRL_R
         Curses.clear
         init
       end

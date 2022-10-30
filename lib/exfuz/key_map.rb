@@ -19,4 +19,12 @@ module Exfuz
       @kmap[key].fired
     end
   end
+
+  module Key
+    RIGHT = Curses::Key::RIGHT
+    LEFT = Curses::Key::LEFT
+    ENTER = Curses::Key::ENTER
+    CTRL_E = Curses::KEY_CTRL_E
+    CTRL_R = Curses::KEY_CTRL_R
+  end
 end
