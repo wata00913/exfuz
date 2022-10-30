@@ -9,6 +9,7 @@ module Exfuz
       @status = status
       @prev_loaded = @status.loaded
       @key_map = key_map
+      @query = ''
     end
 
     def status
@@ -17,6 +18,8 @@ module Exfuz
 
     def init
       Curses.init_screen
+      # キー入力の文字を画面に反映させない
+      Curses.noecho
       # 入力の待機時間(milliseconds)
       Curses.timeout = 100
       draw
@@ -38,8 +41,6 @@ module Exfuz
       # 待機時間内に入力されない場合
       return unless @ch
 
-      # イベント内の処理で描画する場合があるためキャレットの更新を先に行う
-      @caret[1] += 1
       handle_event(@ch)
     end
 
@@ -66,6 +67,10 @@ module Exfuz
       when Exfuz::Key::CTRL_R
         Curses.clear
         init
+      else
+        @query += ch
+        @caret[1] += 1
+        refresh
       end
     end
 
@@ -80,6 +85,10 @@ module Exfuz
     end
 
     def print_head_line
+      # 前回の入力内容を保持してないためクエリの全文字を再描画
+      Curses.setpos(0, 0)
+      Curses.addstr(@query)
+
       col = Curses.cols - status.size
       Curses.setpos(0, col)
       Curses.addstr(status)
