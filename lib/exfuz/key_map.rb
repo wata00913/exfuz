@@ -26,5 +26,7 @@ module Exfuz
     ENTER = Curses::Key::ENTER
     CTRL_E = Curses::KEY_CTRL_E
     CTRL_R = Curses::KEY_CTRL_R
+    # 現状は開発環境の値に合わせる (127 or 263)
+    BACKSPACE = 127
   end
 end

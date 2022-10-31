@@ -67,6 +67,13 @@ module Exfuz
       when Exfuz::Key::CTRL_R
         Curses.clear
         init
+      when Exfuz::Key::BACKSPACE
+        # 削除箇所を空白で置き換える
+        @query.sub!(/.$/, ' ')
+        @caret[1] -= 1
+        refresh
+        # 置き換えた空白は不要なので削除する
+        @query.delete_suffix!(' ')
       else
         @query += ch
         @caret[1] += 1
