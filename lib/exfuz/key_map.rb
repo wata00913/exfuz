@@ -28,5 +28,13 @@ module Exfuz
     CTRL_R = Curses::KEY_CTRL_R
     # 現状は開発環境の値に合わせる (127 or 263)
     BACKSPACE = 127
+
+    def to_key(bytes)
+      {
+        185 => RIGHT,
+        186 => LEFT
+      }[bytes.sum]
+    end
+    module_function :to_key
   end
 end

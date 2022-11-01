@@ -5,11 +5,10 @@ require 'curses'
 module Exfuz
   class Screen
     def initialize(status = nil, caret = nil, key_map = nil)
-      @caret = caret || [0, 0]
       @status = status
       @prev_loaded = @status.loaded
       @key_map = key_map
-      @query = ''
+      @query = Exfuz::Query.new(caret || [0, 0])
     end
 
     def status
@@ -68,15 +67,25 @@ module Exfuz
         Curses.clear
         init
       when Exfuz::Key::BACKSPACE
-        # 削除箇所を空白で置き換える
-        @query.sub!(/.$/, ' ')
-        @caret[1] -= 1
+        @query.delete
         refresh
-        # 置き換えた空白は不要なので削除する
-        @query.delete_suffix!(' ')
+      when Exfuz::Key::LEFT
+        @query.left
+        refresh
+      when Exfuz::Key::RIGHT
+        @query.right
+        refresh
+      when 27
+        mch = Exfuz::Key.to_key([ch, Curses.getch.bytes, Curses.getch.bytes].flatten)
+        case mch
+        when Exfuz::Key::LEFT
+          @query.left
+        when Exfuz::Key::RIGHT
+          @query.right
+        end
+        refresh
       else
-        @query += ch
-        @caret[1] += 1
+        @query.add(ch)
         refresh
       end
     end
@@ -88,13 +97,13 @@ module Exfuz
     end
 
     def reset_caret
-      Curses.setpos(*@caret)
+      Curses.setpos(*@query.caret)
     end
 
     def print_head_line
       # 前回の入力内容を保持してないためクエリの全文字を再描画
       Curses.setpos(0, 0)
-      Curses.addstr(@query)
+      Curses.addstr(@query.line)
 
       col = Curses.cols - status.size
       Curses.setpos(0, col)
