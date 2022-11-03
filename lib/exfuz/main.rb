@@ -11,6 +11,7 @@ require_relative 'key_map'
 require_relative 'event'
 require_relative 'fuzzy_finder_command'
 require_relative 'query'
+require_relative 'configuration'
 
 def read_data(xlsxs, data = [], status)
   xlsxs.each_with_index do |xlsx, _idx|

@@ -1,17 +1,39 @@
 # frozen_string_literal: true
 
+require 'pathname'
+
 module Exfuz
   class Candidate
-    SEP = ':'
     def initialize(book_name:, sheet_name:, textable:)
       @book_name = book_name
       @sheet_name = sheet_name
       @textable = textable
     end
 
-    def to_s(format: :default)
-      path = File.expand_path(@book_name)
-      [path, @sheet_name, @textable.position_s, @textable.value].join(SEP)
+    def to_line
+      @conf ||= Exfuz::Configuration.instance
+      [
+        book_name_line,
+        @sheet_name,
+        textable_position_line,
+        @textable.value
+      ].join(@conf.line_sep)
+    end
+
+    private
+
+    def book_name_line
+      pname = Pathname.new(@book_name)
+      case @conf.book_name_path_type
+      when :relative
+        pname.relative_path_from(@conf.dirname.to_s)
+      when :absolute
+        book_name
+      end
+    end
+
+    def textable_position_line
+      @textable.position_s(format: @conf.cell_position_format)
     end
   end
 end

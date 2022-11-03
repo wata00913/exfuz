@@ -17,8 +17,13 @@ module Exfuz
       @value = value
     end
 
-    def position_s(format: :default)
-      to_address(@col, row)
+    def position_s(format: :address)
+      case format
+      when :address
+        to_address(@col, row)
+      when :index
+        "$#{col}$#{row}"
+      end
     end
 
     private

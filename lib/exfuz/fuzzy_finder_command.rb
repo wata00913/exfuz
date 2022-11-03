@@ -15,7 +15,7 @@ module Exfuz
       begin
         stdio = IO.popen(cmds, 'r+')
         @candidates.each_with_index do |c, idx|
-          stdio.puts "#{idx + 1}:#{c}"
+          stdio.puts "#{idx + 1}:#{c.to_line}"
         end
       ensure
         stdio.close_write
