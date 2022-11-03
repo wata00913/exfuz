@@ -32,6 +32,10 @@ module Exfuz
       @data[:line_sep]
     end
 
+    def split_new_line
+      @data[:split_new_line]
+    end
+
     private
 
     def set_data
@@ -64,7 +68,8 @@ module Exfuz
       {
         book_name_path_type: :relative,
         cell_position_format: :index,
-        line_sep: ':'
+        line_sep: ':',
+        split_new_line: false
       }
     end
   end

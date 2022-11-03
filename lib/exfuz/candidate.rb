@@ -16,7 +16,7 @@ module Exfuz
         book_name_line,
         @sheet_name,
         textable_position_line,
-        @textable.value
+        value_line
       ].join(@conf.line_sep)
     end
 
@@ -28,12 +28,17 @@ module Exfuz
       when :relative
         pname.relative_path_from(@conf.dirname.to_s)
       when :absolute
-        book_name
+        @book_name
       end
     end
 
     def textable_position_line
       @textable.position_s(format: @conf.cell_position_format)
+    end
+
+    def value_line
+      text = @textable.value.to_s
+      @conf.split_new_line ? text : text.gsub(/\R+/) { '\n' }
     end
   end
 end
