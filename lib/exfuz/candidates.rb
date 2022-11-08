@@ -20,7 +20,8 @@ module Exfuz
       @items.each do |k, v|
         if word.empty?
           yield k, v
-        elsif v.method(attr).call =~ regexp
+        # 文字列型以外の値もあるので一旦Stringに変換する
+        elsif v.method(attr).call.to_s =~ regexp
           yield k, v
         end
       end
