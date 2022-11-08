@@ -39,11 +39,11 @@ def main
 
   status = Exfuz::Status.new(xlsxs.size)
   candidates = Exfuz::Candidates.new
-  cmd = Exfuz::FuzzyFinderCommand.new(candidates)
   key_map = Exfuz::KeyMap.new
-  key_map.add_event_handler(Exfuz::Key::CTRL_R, cmd, func: :run)
   caret = [0, 0]
   screen = Exfuz::Screen.new(status, caret, key_map)
+  cmd = Exfuz::FuzzyFinderCommand.new(candidates, screen.query)
+  key_map.add_event_handler(Exfuz::Key::CTRL_R, cmd, func: :run)
 
   screen.init
   Curses.close_screen

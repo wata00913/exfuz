@@ -4,6 +4,8 @@ require 'curses'
 
 module Exfuz
   class Screen
+    attr_reader :query
+
     def initialize(status = nil, caret = nil, key_map = nil)
       @status = status
       @prev_loaded = @status.loaded

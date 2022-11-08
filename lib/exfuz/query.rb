@@ -10,6 +10,10 @@ module Exfuz
       @caret = caret
     end
 
+    def text
+      @chars.join
+    end
+
     def add(ch)
       insert(caret[1], ch)
       right

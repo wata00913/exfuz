@@ -4,9 +4,10 @@ module Exfuz
   class FuzzyFinderCommand
     attr_reader :selected
 
-    def initialize(candidates)
+    def initialize(candidates, query)
       @candidates = candidates
       @selected = ''
+      @query = query
     end
 
     def run
@@ -14,7 +15,7 @@ module Exfuz
 
       begin
         stdio = IO.popen(cmds, 'r+')
-        @candidates.each_by_filter do |idx, c|
+        @candidates.each_by_filter(@query.text) do |idx, c|
           stdio.puts "#{idx}:#{c.to_line}"
         end
       ensure
