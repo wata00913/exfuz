@@ -3,6 +3,7 @@
 require 'curses'
 require 'timeout'
 require_relative 'parser'
+require_relative 'candidates'
 require_relative 'candidate'
 require_relative 'cell'
 require_relative 'screen'
@@ -13,15 +14,15 @@ require_relative 'fuzzy_finder_command'
 require_relative 'query'
 require_relative 'configuration'
 
-def read_data(xlsxs, data = [], status)
+def read_data(xlsxs, candidates = [], status)
   xlsxs.each_with_index do |xlsx, _idx|
     p = Exfuz::Parser.new(xlsx)
     p.parse
     p.each_cell_with_all do |cell|
       c = Exfuz::Cell.new(address: cell[:cell], value: cell[:value])
-      data << Exfuz::Candidate.new(book_name: cell[:book_name],
-                                   sheet_name: cell[:sheet_name],
-                                   textable: c)
+      candidates.push(Exfuz::Candidate.new(book_name: cell[:book_name],
+                                           sheet_name: cell[:sheet_name],
+                                           textable: c))
     end
 
     status.update(1)
@@ -37,8 +38,8 @@ def main
   xlsxs = Dir.glob('**/*.xlsx')
 
   status = Exfuz::Status.new(xlsxs.size)
-  data = []
-  cmd = Exfuz::FuzzyFinderCommand.new(data)
+  candidates = Exfuz::Candidates.new
+  cmd = Exfuz::FuzzyFinderCommand.new(candidates)
   key_map = Exfuz::KeyMap.new
   key_map.add_event_handler(Exfuz::Key::CTRL_R, cmd, func: :run)
   caret = [0, 0]
@@ -50,7 +51,7 @@ def main
 
   Thread.new do
     sleep 0.01
-    read_data(xlsxs, data, status)
+    read_data(xlsxs, candidates, status)
   end
 
   loop do

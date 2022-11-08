@@ -10,6 +10,10 @@ module Exfuz
       @textable = textable
     end
 
+    def value
+      @textable.value
+    end
+
     def to_line
       @conf ||= Exfuz::Configuration.instance
       [
