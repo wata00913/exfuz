@@ -87,7 +87,21 @@ module Exfuz
         end
         refresh
       else
-        @query.add(ch)
+        # 印字可能でない文字の場合
+        if ch.instance_of?(Integer)
+          mbytes = [ch]
+          # スレッドセーフでないかも
+          # 稀に正常にchが読み込めない場合があった
+          loop do
+            remaining = Curses.getch
+            break if remaining.nil?
+
+            mbytes << remaining
+          end
+          @query.add(mbytes)
+        else
+          @query.add(ch)
+        end
         refresh
       end
     end

@@ -7,4 +7,5 @@ module Exfuz
   autoload :Parser, 'exfuz/parser'
   autoload :Candidate, 'exfuz/candidate'
   autoload :Cell, 'exfuz/cell'
+  autoload :Query, 'exfuz/query'
 end
