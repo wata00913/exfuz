@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
 
 require "exfuz"
+require_relative "../lib/exfuz/main"
