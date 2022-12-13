@@ -21,7 +21,7 @@ def candidate_by(candidates, line, sep: ':')
 end
 
 def main
-  xlsxs = Dir.glob('**/*.xlsx')
+  xlsxs = Dir.glob('**/[^~$]*.xlsx')
 
   status = Exfuz::Status.new(xlsxs.size)
   candidates = Exfuz::Candidates.new
