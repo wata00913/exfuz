@@ -4,6 +4,7 @@ require_relative 'exfuz/version'
 
 module Exfuz
   class Error < StandardError; end
+  autoload :BookName, 'exfuz/book_name'
   autoload :Candidate, 'exfuz/candidate'
   autoload :Candidates, 'exfuz/candidates'
   autoload :Cell, 'exfuz/cell'
