@@ -26,6 +26,12 @@ module Exfuz
       end
     end
 
+    def ==(other)
+      return false if other.nil? || !other.instance_of?(Exfuz::Cell)
+
+      [@row, @col, @value] == [other.row, other.col, other.value]
+    end
+
     private
 
     def to_idx(address)
