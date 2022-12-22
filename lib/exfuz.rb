@@ -16,5 +16,6 @@ module Exfuz
   autoload :Parser, 'exfuz/parser'
   autoload :Query, 'exfuz/query'
   autoload :Screen, 'exfuz/screen'
+  autoload :SheetName, 'exfuz/sheet_name'
   autoload :Status, 'exfuz/status'
 end
