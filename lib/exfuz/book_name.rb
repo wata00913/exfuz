@@ -6,8 +6,10 @@ module Exfuz
   class BookName
     attr_reader :absolute_path
 
+    include Exfuz::Util
+
     def initialize(file_name)
-      @absolute_path = File.absolute_path(file_name)
+      @absolute_path = @text = File.absolute_path(file_name)
     end
 
     def ==(other)

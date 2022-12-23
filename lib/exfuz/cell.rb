@@ -4,6 +4,8 @@ module Exfuz
   class Cell
     attr_reader :row, :col, :value
 
+    include Exfuz::Util
+
     def initialize(value:, row: nil, col: nil, address: nil)
       if row && col
         @row = row
@@ -14,7 +16,7 @@ module Exfuz
         raise "argument error. row: #{row}, col: #{col}, address: #{address}"
       end
 
-      @value = value
+      @value = @text = value
     end
 
     def position_s(format: :address)

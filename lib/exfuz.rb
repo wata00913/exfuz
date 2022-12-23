@@ -14,8 +14,10 @@ module Exfuz
   autoload :FuzzyFinderCommand, 'exfuz/fuzzy_finder_command'
   autoload :KeyMap, 'exfuz/key_map'
   autoload :Parser, 'exfuz/parser'
+  autoload :Position, 'exfuz/position'
   autoload :Query, 'exfuz/query'
   autoload :Screen, 'exfuz/screen'
   autoload :SheetName, 'exfuz/sheet_name'
   autoload :Status, 'exfuz/status'
+  autoload :Util, 'exfuz/util'
 end

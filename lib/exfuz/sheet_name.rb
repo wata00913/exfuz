@@ -4,8 +4,10 @@ module Exfuz
   class SheetName
     attr_reader :name
 
+    include Exfuz::Util
+
     def initialize(name)
-      @name = name
+      @name = @text = name
     end
 
     def ==(other)
