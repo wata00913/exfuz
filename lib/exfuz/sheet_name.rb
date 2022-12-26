@@ -15,5 +15,9 @@ module Exfuz
 
       name == other.name
     end
+
+    def hash
+      @name.hash
+    end
   end
 end

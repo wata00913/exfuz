@@ -16,6 +16,10 @@ module Exfuz
       absolute_path == other.absolute_path
     end
 
+    def hash
+      absolute_path.hash
+    end
+
     def relative_path
       Pathname.new(@absolute_path).relative_path_from(Dir.pwd).to_s
     end

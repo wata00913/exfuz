@@ -22,5 +22,14 @@ module Exfuz
       end
       true
     end
+
+    def ==(other)
+      other.class === self && other.hash == hash
+    end
+    alias eql? ==
+
+    def hash
+      @key_to_obj.values.hash
+    end
   end
 end

@@ -34,6 +34,10 @@ module Exfuz
       [@row, @col, @value] == [other.row, other.col, other.value]
     end
 
+    def hash
+      [@row, @col, @value].hash
+    end
+
     private
 
     def to_idx(address)
