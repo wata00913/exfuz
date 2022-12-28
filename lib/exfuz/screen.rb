@@ -6,11 +6,15 @@ module Exfuz
   class Screen
     attr_reader :query
 
-    def initialize(status = nil, caret = nil, key_map = nil)
+    def initialize(status = nil, caret = nil, key_map = nil,
+                   candidates = nil)
       @status = status
       @prev_loaded = @status.loaded
       @key_map = key_map
       @query = Exfuz::Query.new(caret || [0, 0])
+      @cmd = Exfuz::FuzzyFinderCommand.new(candidates, @query)
+
+      register_event
     end
 
     def status
@@ -58,10 +62,41 @@ module Exfuz
       Curses.close_screen
     end
 
+    # event
+    def start_cmd
+      @cmd.run
+      Curses.clear
+      init
+    end
+
+    def delete_char
+      @query.delete
+      refresh
+    end
+
+    def move_left
+      @query.left
+      refresh
+    end
+
+    def move_right
+      @query.right
+      refresh
+    end
+
+    def finish
+      close
+    end
+
+    def insert_char(char)
+      @query.add(char)
+      refresh
+    end
+
     private
 
     def handle_event(ch)
-      input = if Exfuz::Key.can_convert_to_name_or_char?(ch)
+      input = if Exfuz::Key.can_convert_to_name_and_char?(ch)
                 ch
               else
                 chs = [ch]
@@ -76,28 +111,18 @@ module Exfuz
                 chs
               end
 
-      name_or_char = Exfuz::Key.input_to_name_or_char(input)
+      name, char = Exfuz::Key.input_to_name_and_char(input)
 
-      @key_map.pressed(name_or_char)
-      case name_or_char
-      when Exfuz::Key::CTRL_E
-        close
-      when Exfuz::Key::CTRL_R
-        Curses.clear
-        init
-      when Exfuz::Key::BACKSPACE
-        @query.delete
-        refresh
-      when Exfuz::Key::LEFT
-        @query.left
-        refresh
-      when Exfuz::Key::RIGHT
-        @query.right
-        refresh
-      else
-        @query.add(name_or_char)
-        refresh
-      end
+      char.nil? ? @key_map.pressed(name) : @key_map.pressed(name, char)
+    end
+
+    def register_event
+      @key_map.add_event_handler(Exfuz::Key::CTRL_R, self, func: :start_cmd)
+      @key_map.add_event_handler(Exfuz::Key::CTRL_E, self, func: :finish)
+      @key_map.add_event_handler(Exfuz::Key::LEFT, self, func: :move_left)
+      @key_map.add_event_handler(Exfuz::Key::RIGHT, self, func: :move_right)
+      @key_map.add_event_handler(Exfuz::Key::BACKSPACE, self, func: :delete_char)
+      @key_map.add_event_handler(Exfuz::Key::CHAR, self, func: :insert_char)
     end
 
     def draw

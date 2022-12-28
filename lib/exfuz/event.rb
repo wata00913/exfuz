@@ -9,9 +9,9 @@ module Exfuz
       add_observer(obj, func)
     end
 
-    def fired
+    def fired(*args)
       changed
-      notify_observers
+      args.empty? ? notify_observers : notify_observers(*args)
     end
   end
 end

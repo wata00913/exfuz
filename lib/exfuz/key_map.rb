@@ -13,17 +13,17 @@ module Exfuz
       @kmap[key].add_event_handler(obj, func)
     end
 
-    def pressed(key)
+    def pressed(key, *args)
       return unless @kmap.key?(key)
 
-      @kmap[key].fired
+      @kmap[key].fired(*args)
     end
   end
 
   module Key
     private_constant
 
-    # input_to_name_or_charで、文字と区別するためにシンボルで定義
+    # input_to_name_and_charで、文字と区別するためにシンボルで定義
     CTRL_A = :ctrl_a
     CTRL_E = :ctrl_e
     CTRL_R = :ctrl_r
@@ -46,6 +46,7 @@ module Exfuz
     LEFT = :left
     BACKSPACE = :backspace
     ENTER = :enter
+    CHAR = :char
 
     # メモ化してもカーソル移動が若干遅い
     INPUT_TO_SPECIAL_KEY_NAME = {
@@ -75,19 +76,19 @@ module Exfuz
 
     module_function
 
-    def input_to_name_or_char(input)
+    def input_to_name_and_char(input)
       case input
       when Array
         first = input.first
         if special_key?(first)
           input_to_special_key_name(input.slice(1, input.size - 1).join)
         else
-          multibytes_to_char(input)
+          [CHAR, multibytes_to_char(input)]
         end
       when Integer
         input_to_special_key_name(input)
       when String
-        input
+        [CHAR, input]
       end
     end
 
@@ -95,9 +96,9 @@ module Exfuz
       INPUT_TO_SPECIAL_KEY_NAME[str_or_number]
     end
 
-    def can_convert_to_name_or_char?(input)
-      name_or_char = input_to_name_or_char(input)
-      !name_or_char.nil? && name_or_char != ESC
+    def can_convert_to_name_and_char?(input)
+      name = input_to_name_and_char(input)
+      !name.nil? && name != ESC
     end
 
     def special_key?(number)

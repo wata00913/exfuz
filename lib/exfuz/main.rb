@@ -27,9 +27,7 @@ def main
   candidates = Exfuz::Candidates.new
   key_map = Exfuz::KeyMap.new
   caret = [0, 0]
-  screen = Exfuz::Screen.new(status, caret, key_map)
-  cmd = Exfuz::FuzzyFinderCommand.new(candidates, screen.query)
-  key_map.add_event_handler(Exfuz::Key::CTRL_R, cmd, func: :run)
+  screen = Exfuz::Screen.new(status, caret, key_map, candidates)
 
   screen.init
   Curses.close_screen
@@ -51,4 +49,10 @@ def main
     screen.wait_input
     break if screen.closed?
   end
+end
+
+if $PROGRAM_NAME == __FILE__
+  $LOAD_PATH.unshift(File.expand_path('..', __dir__))
+  require_relative '../exfuz'
+  main
 end
