@@ -19,16 +19,14 @@ module Exfuz
       @chars.join
     end
 
-    def add(ch_or_mbytes)
-      if ch_or_mbytes.instance_of?(Array)
-        ch_or_mbytes.each_slice(MAX_UTF_8_BYTES) do |mb|
-          mch = mb.pack('C*').force_encoding(Encoding::UTF_8)
-
-          insert_at_caret(mch)
+    def add(ch_or_chs)
+      if ch_or_chs.instance_of?(Array)
+        ch_or_chs.each do |ch|
+          insert_at_caret(ch)
           right
         end
-      elsif ch_or_mbytes.instance_of?(String)
-        insert_at_caret(ch_or_mbytes)
+      elsif ch_or_chs.instance_of?(String)
+        insert_at_caret(ch_or_chs)
         right
       end
     end

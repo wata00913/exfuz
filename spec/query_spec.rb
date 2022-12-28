@@ -5,13 +5,13 @@ RSpec.describe Exfuz::Query do
     context 'query is aあいうえお and caret is う' do
       query = Exfuz::Query.new([0, 0])
       query.add('a')
-      query.add('あいうえお'.bytes)
+      query.add(%w[あ い う え お])
       3.times do
         query.left
       end
 
       it 'caret is う and query is aあいかうえお when add か' do
-        query.add('か'.bytes)
+        query.add('か')
         expect(query.text).to eq('aあいかうえお')
         expect(query.caret[1]).to eq(7)
       end
@@ -21,7 +21,7 @@ RSpec.describe Exfuz::Query do
     context 'query is aあいうえお' do
       query = Exfuz::Query.new([0, 0])
       query.add('a')
-      query.add('あいうえお'.bytes)
+      query.add(%w[あ い う え お])
 
       context 'caret is right end(11)' do
         it 'deleted char is お and caret is right end(9) when one time delete' do
@@ -43,7 +43,7 @@ RSpec.describe Exfuz::Query do
     context 'query is aあいうえお' do
       query = Exfuz::Query.new([0, 0])
       query.add('a')
-      query.add('あいうえお'.bytes)
+      query.add(%w[あ い う え お])
 
       context 'caret is right end(11)' do
         it 'right position is right end(11)' do
@@ -62,7 +62,7 @@ RSpec.describe Exfuz::Query do
     context 'query is aあいうえお' do
       query = Exfuz::Query.new([0, 0])
       query.add('a')
-      query.add('あいうえお'.bytes)
+      query.add(%w[あ い う え お])
 
       context 'caret is right end(11)' do
         it 'left position is お(9)' do

@@ -61,8 +61,25 @@ module Exfuz
     private
 
     def handle_event(ch)
-      @key_map.pressed(ch)
-      case ch
+      input = if Exfuz::Key.can_convert_to_name_or_char?(ch)
+                ch
+              else
+                chs = [ch]
+                # スレッドセーフでないかも
+                # 稀に正常にchが読み込めない場合があった
+                loop do
+                  remaining = Curses.getch
+                  break if remaining.nil?
+
+                  chs << remaining
+                end
+                chs
+              end
+
+      name_or_char = Exfuz::Key.input_to_name_or_char(input)
+
+      @key_map.pressed(name_or_char)
+      case name_or_char
       when Exfuz::Key::CTRL_E
         close
       when Exfuz::Key::CTRL_R
@@ -77,31 +94,8 @@ module Exfuz
       when Exfuz::Key::RIGHT
         @query.right
         refresh
-      when 27
-        mch = Exfuz::Key.to_key([ch, Curses.getch.bytes, Curses.getch.bytes].flatten)
-        case mch
-        when Exfuz::Key::LEFT
-          @query.left
-        when Exfuz::Key::RIGHT
-          @query.right
-        end
-        refresh
       else
-        # 印字可能でない文字の場合
-        if ch.instance_of?(Integer)
-          mbytes = [ch]
-          # スレッドセーフでないかも
-          # 稀に正常にchが読み込めない場合があった
-          loop do
-            remaining = Curses.getch
-            break if remaining.nil?
-
-            mbytes << remaining
-          end
-          @query.add(mbytes)
-        else
-          @query.add(ch)
-        end
+        @query.add(name_or_char)
         refresh
       end
     end

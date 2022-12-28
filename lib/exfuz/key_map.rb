@@ -21,27 +21,57 @@ module Exfuz
   end
 
   module Key
-    RIGHT = Curses::Key::RIGHT
-    LEFT = Curses::Key::LEFT
-    ENTER = 'enter'
-    CTRL_A = 'ctrl-a'
-    CTRL_E = Curses::KEY_CTRL_E
-    CTRL_R = Curses::KEY_CTRL_R
-    ESC = 'esc'
-    F1 = 'f1'
-    F2 = 'f2'
-    F3 = 'f3'
-    F4 = 'f4'
-    F5 = 'f5'
-    F6 = 'f6'
-    F7 = 'f7'
-    F8 = 'f8'
-    F9 = 'f9'
-    F10 = 'f10'
-    F11 = 'f11'
-    F12 = 'f12'
-    # 現状は開発環境の値に合わせる (127 or 263)
-    BACKSPACE = 127
+    private_constant
+
+    # input_to_name_or_charで、文字と区別するためにシンボルで定義
+    CTRL_A = :ctrl_a
+    CTRL_E = :ctrl_e
+    CTRL_R = :ctrl_r
+    ESC = :esc
+    F1 = :f1
+    F2 = :f2
+    F3 = :f3
+    F4 = :f4
+    F5 = :f5
+    F6 = :f6
+    F7 = :f7
+    F8 = :f8
+    F9 = :f9
+    F10 = :f10
+    F11 = :f11
+    F12 = :f12
+    UP = :down
+    DOWN = :up
+    RIGHT = :right
+    LEFT = :left
+    BACKSPACE = :backspace
+    ENTER = :enter
+
+    # メモ化してもカーソル移動が若干遅い
+    INPUT_TO_SPECIAL_KEY_NAME = {
+      'OP' => F1,
+      'OQ' => F2,
+      'OR' => F3,
+      'OS' => F4,
+      '[15' => F5,
+      '[17' => F6,
+      '[18' => F7,
+      '[19' => F8,
+      '[20' => F9,
+      '[21' => F10,
+      '[23' => F11,
+      '[24' => F12,
+      '[A' => UP,
+      '[B' => DOWN,
+      '[C' => RIGHT,
+      '[D' => LEFT,
+      Curses::Key::ENTER => ENTER,
+      10 => ENTER,
+      27 => ESC,
+      Curses::KEY_CTRL_E => CTRL_E,
+      Curses::KEY_CTRL_R => CTRL_R,
+      127 => BACKSPACE # 現状は開発環境の値に合わせる (127 or 263)
+    }.freeze
 
     module_function
 
@@ -61,31 +91,13 @@ module Exfuz
       end
     end
 
-    def to_key(bytes)
-      {
-        185 => RIGHT,
-        186 => LEFT
-      }[bytes.sum]
+    def input_to_special_key_name(str_or_number)
+      INPUT_TO_SPECIAL_KEY_NAME[str_or_number]
     end
 
-    def input_to_special_key_name(str_or_number)
-      {
-        'OP' => F1,
-        'OQ' => F2,
-        'OR' => F3,
-        'OS' => F4,
-        '[15' => F5,
-        '[17' => F6,
-        '[18' => F7,
-        '[19' => F8,
-        '[20' => F9,
-        '[21' => F10,
-        '[23' => F11,
-        '[24' => F12,
-        Curses::Key::ENTER => 'enter',
-        10 => 'enter',
-        27 => 'esc'
-      }[str_or_number]
+    def can_convert_to_name_or_char?(input)
+      name_or_char = input_to_name_or_char(input)
+      !name_or_char.nil? && name_or_char != ESC
     end
 
     def special_key?(number)
