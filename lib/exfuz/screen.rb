@@ -12,7 +12,8 @@ module Exfuz
       @prev_loaded = @status.loaded
       @key_map = key_map
       @query = Exfuz::Query.new(caret || [0, 0])
-      @cmd = Exfuz::FuzzyFinderCommand.new(candidates, @query)
+      @cmd = Exfuz::FuzzyFinderCommand.new
+      @candidates = candidates
 
       register_event
     end
@@ -64,7 +65,11 @@ module Exfuz
 
     # event
     def start_cmd
-      @cmd.run
+      @cmd.run do |fiber|
+        @candidates.each_by_filter(@query.text) do |idx, c|
+          fiber.resume("#{idx}:#{c.to_line}")
+        end
+      end
       Curses.clear
       init
     end
