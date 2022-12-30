@@ -5,14 +5,15 @@ def read_data(xlsxs, candidates = [], status)
     p = Exfuz::Parser.new(xlsx)
     p.parse
     p.each_cell_with_all do |cell|
+      b = Exfuz::BookName.new(cell[:book_name])
+      s = Exfuz::SheetName.new(cell[:sheet_name])
       c = Exfuz::Cell.new(address: cell[:cell], value: cell[:value])
-      candidates.push(Exfuz::Candidate.new(book_name: cell[:book_name],
-                                           sheet_name: cell[:sheet_name],
-                                           textable: c))
+      candidates.push(Exfuz::Position.new([{ book_name: b }, { sheet_name: s }, { textable: c }]))
     end
 
     status.update(1)
   end
+  candidates.close_push
 end
 
 def candidate_by(candidates, line, sep: ':')

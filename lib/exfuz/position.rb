@@ -8,6 +8,9 @@ module Exfuz
       hierarchy.each do |h|
         k = h.keys[0]
         @key_to_obj[k] = h[k]
+
+        instance_eval "@#{k.to_s} = h[k]"
+        self.class.send(:attr_reader, k)
       end
     end
 

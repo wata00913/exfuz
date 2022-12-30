@@ -14,6 +14,7 @@ module Exfuz
       @query = Exfuz::Query.new(caret || [0, 0])
       @cmd = Exfuz::FuzzyFinderCommand.new
       @candidates = candidates
+      @conf = Exfuz::Configuration.instance
 
       register_event
     end
@@ -65,9 +66,18 @@ module Exfuz
 
     # event
     def start_cmd
+      filtered = @candidates.filter({ textable: @query.text })
       @cmd.run do |fiber|
-        @candidates.each_by_filter(@query.text) do |idx, c|
-          fiber.resume("#{idx}:#{c.to_line}")
+        filtered.positions.each_with_index do |position, idx|
+          value_text = position.textable.value.to_s
+          line = [
+            idx,
+            position.book_name.relative_path,
+            position.sheet_name.name,
+            position.textable.position_s(format: @conf.cell_position_format),
+            @conf.split_new_line ? value_text : value_text.gsub(/\R+/) { '\n' }
+          ].join(@conf.line_sep)
+          fiber.resume(line)
         end
       end
       Curses.clear

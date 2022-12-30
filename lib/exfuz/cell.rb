@@ -16,7 +16,9 @@ module Exfuz
         raise "argument error. row: #{row}, col: #{col}, address: #{address}"
       end
 
-      @value = @text = value
+      @value = value
+      # valueはString型以外も含むのでマッチ用の@textは文字列に変換させる
+      @text = @value.to_s
     end
 
     def position_s(format: :address)
