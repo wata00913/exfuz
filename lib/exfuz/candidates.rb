@@ -13,12 +13,17 @@ module Exfuz
       @@queue << item
     end
 
+    def suspend_push
+      @@queue << nil
+    end
+
     def close_push?
       @@queue.closed?
     end
 
     def close_push
       @@queue << nil
+      @@queue.close
     end
 
     def positions
@@ -43,7 +48,6 @@ module Exfuz
       while data = @@queue.pop
         @processed << data
       end
-      @@queue.close
     end
   end
 end

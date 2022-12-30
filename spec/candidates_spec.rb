@@ -13,6 +13,7 @@ RSpec.describe Exfuz::Candidate do
   candidates = Exfuz::Candidates.new
   # デッドロック(メインスレッドのみの起動であるが)を防ぐためにnilを追加
   [p1, p2, p3, nil].each { |p| candidates.push(p) }
+  candidates.close_push
 
   describe 'filter' do
     it 'when sheet_name=Sheet1 & textable=data, filter one record' do

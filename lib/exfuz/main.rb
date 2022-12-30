@@ -11,6 +11,8 @@ def read_data(xlsxs, candidates = [], status)
       candidates.push(Exfuz::Position.new([{ book_name: b }, { sheet_name: s }, { textable: c }]))
     end
 
+    candidates.suspend_push
+
     status.update(1)
   end
   candidates.close_push
