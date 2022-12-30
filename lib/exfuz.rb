@@ -12,6 +12,7 @@ module Exfuz
   autoload :Command, 'exfuz/command'
   autoload :Event, 'exfuz/event'
   autoload :FuzzyFinderCommand, 'exfuz/fuzzy_finder_command'
+  autoload :Group, 'exfuz/group'
   autoload :Key, 'exfuz/key_map'
   autoload :KeyMap, 'exfuz/key_map'
   autoload :Parser, 'exfuz/parser'

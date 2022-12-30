@@ -28,4 +28,19 @@ RSpec.describe Exfuz::Position do
       expect(p1.eql?(p2)).not_to eq(true)
     end
   end
+
+  describe 'slice' do
+    b = Exfuz::BookName.new('./spec/test_data/data.xlsx')
+    s = Exfuz::SheetName.new('Sheet1')
+    c = Exfuz::Cell.new(address: '$C$3', value: 'Test Data')
+    context 'when position is book_name, sheet_name, textable and slice [book_name, sheet_name]' do
+      it 'return position [book_name, sheet_name]' do
+        expected = Exfuz::Position.new([{ book_name: b }, { sheet_name: s }])
+        p = Exfuz::Position.new([{ book_name: b }, { sheet_name: s }, { textable: c }])
+        sliced_p = p.slice(:sheet_name)
+
+        expect(sliced_p).to eq(expected)
+      end
+    end
+  end
 end

@@ -4,12 +4,20 @@ module Exfuz
   class Position
     def initialize(hierarchy)
       @key_to_obj = {}
-      @hierarchy = []
+      @hierarchy = hierarchy
       hierarchy.each do |h|
         k = h.keys[0]
         @key_to_obj[k] = h[k]
-        @hierarchy << k
       end
+    end
+
+    def slice(key)
+      keys = @key_to_obj.keys
+      remaining = keys[0, (keys.find_index { |k| k == key }) + 1]
+      args = @hierarchy.filter do |h|
+        remaining.include?(h.keys[0])
+      end
+      Exfuz::Position.new(args)
     end
 
     def match?(conditions)

@@ -41,6 +41,11 @@ module Exfuz
       Exfuz::Candidates.new(filtered)
     end
 
+    def group_by(keys)
+      pipeline
+      Exfuz::Group.new(positions, keys)
+    end
+
     def each_by_filter(word = '', attr: :value)
       regexp = Regexp.new(word)
       @items.each do |k, v|
@@ -54,7 +59,6 @@ module Exfuz
     end
 
     private
-
     def pipeline
       while data = @@queue.pop
         @processed << data
