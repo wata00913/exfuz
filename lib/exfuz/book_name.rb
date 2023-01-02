@@ -4,6 +4,10 @@ require 'pathname'
 
 module Exfuz
   class BookName
+    def self.name
+      :book_name
+    end
+
     attr_reader :absolute_path
 
     include Exfuz::Util
@@ -22,6 +26,11 @@ module Exfuz
 
     def relative_path
       Pathname.new(@absolute_path).relative_path_from(Dir.pwd).to_s
+    end
+
+    def jump_info
+      path = wsl? ? wsl_to_windows(@absolute_path) : @absolute_path
+      { Exfuz::BookName.name => path }
     end
   end
 end

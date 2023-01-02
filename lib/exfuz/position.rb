@@ -9,7 +9,7 @@ module Exfuz
         k = h.keys[0]
         @key_to_obj[k] = h[k]
 
-        instance_eval "@#{k.to_s} = h[k]"
+        instance_eval "@#{k} = h[k]", __FILE__, __LINE__
         self.class.send(:attr_reader, k)
       end
     end
@@ -32,6 +32,14 @@ module Exfuz
         return false unless obj.match?(value)
       end
       true
+    end
+
+    def jump_info
+      keys = @key_to_obj.keys
+      keys.each_with_object({}) do |key, result|
+        obj = send(key)
+        result.merge!(obj.jump_info)
+      end
     end
 
     def ==(other)

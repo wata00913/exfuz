@@ -43,4 +43,27 @@ RSpec.describe Exfuz::Position do
       end
     end
   end
+
+  describe 'jump_info', unless: Exfuz::Util.wsl? do
+    relative_path = './spec/test_data/data.xlsx'
+    b = Exfuz::BookName.new(relative_path)
+    s = Exfuz::SheetName.new('Sheet1')
+    c = Exfuz::Cell.new(address: '$C$5', value: 'Test Data')
+    bp = Exfuz::Position.new([{ book_name: b }])
+    cp = Exfuz::Position.new([{ book_name: b }, { sheet_name: s }, { textable: c }])
+    it 'return book name when destination is book' do
+      expect(bp.jump_info).to eq(
+        { book_name: File.absolute_path(relative_path) }
+      )
+    end
+    it 'return book path, sheet name, cell index when destination is textable' do
+      expect(cp.jump_info).to eq(
+        {
+          book_name: File.absolute_path(relative_path),
+          sheet_name: 'Sheet1',
+          textable: { row: 5, col: 3 }
+        }
+      )
+    end
+  end
 end

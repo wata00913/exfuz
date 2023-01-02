@@ -2,6 +2,10 @@
 
 module Exfuz
   class Cell
+    def self.name
+      :textable
+    end
+
     attr_reader :row, :col, :value
 
     include Exfuz::Util
@@ -38,6 +42,10 @@ module Exfuz
 
     def hash
       [@row, @col, @value].hash
+    end
+
+    def jump_info
+      { Exfuz::Cell.name => { row: @row, col: @col } }
     end
 
     private
