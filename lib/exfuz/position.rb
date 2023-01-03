@@ -14,6 +14,10 @@ module Exfuz
       end
     end
 
+    def bottom_name
+      @key_to_obj.keys.last
+    end
+
     def slice(key)
       keys = @key_to_obj.keys
       remaining = keys[0, (keys.find_index { |k| k == key }) + 1]
@@ -21,6 +25,11 @@ module Exfuz
         remaining.include?(h.keys[0])
       end
       Exfuz::Position.new(args)
+    end
+
+    def slice_keys(key)
+      keys = @key_to_obj.keys
+      keys[0, (keys.find_index { |k| k == key }) + 1]
     end
 
     def match?(conditions)

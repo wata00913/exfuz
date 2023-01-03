@@ -70,8 +70,8 @@ RSpec.describe Exfuz::Candidate do
           Exfuz::Position.new([{ book_name: b1 }, { sheet_name: s2 }])
         ]
         group = candidates.group_by(%i[book_name sheet_name])
-        gbp = group.positions(:book_name)
-        gsp = group.positions(:sheet_name)
+        gbp = group.key_positions(:book_name)
+        gsp = group.key_positions(:sheet_name)
 
         expect(gbp).to match(grouping_book_name_positions)
         expect(gsp).to match(grouping_sheet_name_positions)
