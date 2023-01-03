@@ -9,7 +9,7 @@ module Exfuz
     end
 
     def run
-      cmds = %w[fzf]
+      cmds = %w[fzf -m]
 
       begin
         stdio = IO.popen(cmds, 'r+')
