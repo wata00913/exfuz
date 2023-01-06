@@ -13,6 +13,7 @@ module Exfuz
   autoload :Event, 'exfuz/event'
   autoload :FuzzyFinderCommand, 'exfuz/fuzzy_finder_command'
   autoload :Group, 'exfuz/group'
+  autoload :Jump, 'exfuz/jump'
   autoload :Key, 'exfuz/key_map'
   autoload :KeyMap, 'exfuz/key_map'
   autoload :Parser, 'exfuz/parser'

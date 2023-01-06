@@ -14,6 +14,7 @@ def read_data(xlsxs, candidates = [], status)
     candidates.suspend_push
 
     status.update(1)
+    sleep 1
   end
   candidates.close_push
 end

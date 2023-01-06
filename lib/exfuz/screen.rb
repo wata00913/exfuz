@@ -80,6 +80,15 @@ module Exfuz
           fiber.resume(line)
         end
       end
+
+      selected_positions = @cmd.selected.map do |s|
+        idx = s.split(@conf.line_sep).first.to_i
+        filtered.positions[idx]
+      end
+
+      jump = Exfuz::Jump.new(selected_positions)
+      jump.run
+
       Curses.clear
       init
     end
