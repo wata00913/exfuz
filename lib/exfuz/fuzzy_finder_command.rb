@@ -24,7 +24,7 @@ module Exfuz
         yield fiber
       ensure
         stdio.close_write
-        @selected = stdio.read.chomp
+        @selected = stdio.each_line(chomp: true).to_a
         stdio.close_read
       end
     end
