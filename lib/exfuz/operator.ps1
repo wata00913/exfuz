@@ -1,46 +1,62 @@
+param( 
+ [Parameter(ValueFromPipeline=$true)][string]$in
+)
 $excel = New-Object -ComObject Excel.Application
 
 $excel.Visible = $true
-
-$jumpList = ConvertFrom-Json $Input
-$books = $jumpList | % { $_.info.book_name } | Select-Object -Unique 
-
-foreach ($jump in $jumpList) {
-
-}
-
-
-Function Jump($to, $info) {
-
-  $book = $excel.Workbooks.Open($bookPath)
+Function Jump($to, [ref]$info) {
   switch ($to) {
-    'book_name' { JumpBook($info.book_name) }
+    'book_name' { $book = JumpBook $info.Value.book_name }
     'sheet_name' { 
-        $result = JumpBook($info.book_name) 
-        if ($result) {
-            JumpSheet($info.sheet_name) 
+        $book = JumpBook $info.Value.book_name 
+        if ($book) {
+            $sheet = JumpSheet ([ref]$book) $info.Value.sheet_name
         }
     }
     'textable' { 
-        $result = JumpBook($info.book_name) 
-        if ($result) {
-            JumpSheet($info.sheet_name) 
-            JumpCell($info.textable) 
+        $book = JumpBook $info.Value.book_name
+        if ($book) {
+            $sheet = JumpSheet ([ref]$book) $info.Value.sheet_name 
+            $cell = JumpCell ([ref]$sheet) ([ref]$info.Value.textable) 
         }
     }
     Default {}
   }
 }
 
-Function isOpenBook($path) {
-    $opendPaths = $excel.Workbooks | % {$_.Path()}
+Function IsOpen($path) {
+    $openedPaths = @($excel.Workbooks | % {$_.Path})
+    if ($null -eq $openedPaths) {
+      return $false
+    }
     return $openedPaths.Contains($path)
 }
 
 Function JumpBook($path) {
-  $bookPath = $info.book_name
-  if(isOpen($bookPath)) {
-    return $false
+  if(IsOpen $path) {
+    return $null
   }
-  return $excel.Workbooks.Open($path)
+  $book = $excel.Workbooks.Open($path)
+  return $book
+}
+
+Function JumpSheet([ref]$book, $sheetName) {
+  $sheet = $book.Value.Worksheets($sheetName)
+  $sheet.Activate()
+  return $sheet
+}
+
+Function JumpCell([ref]$sheet, [ref]$cellPosition) {
+  $cell = $sheet.Value.Cells($cellPosition.Value.row, $cellPosition.Value.col)
+  $cell.Activate()
+  return $cell
+}
+
+$targets = ConvertFrom-Json $in
+try {
+  foreach ($target in $targets) {
+    $result = Jump $target.to ([ref]$target.info)
+  } 
+} finally {
+  #$excel.Quit()
 }

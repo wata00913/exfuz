@@ -18,9 +18,9 @@ module Exfuz
     def wsl_to_windows(path)
       nil unless wsl?
 
-      raise ArgumentError, 'not exists path' if File.exist?(path)
+      raise ArgumentError, 'not exists path' unless File.exist?(path)
 
-      `wslpath -w #{path}`
+      `wslpath -w #{path}`.chomp
     end
   end
 end
