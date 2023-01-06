@@ -4,7 +4,7 @@ require 'json'
 
 module Exfuz
   class Jump
-    OPERATOR_PATH = './operator.ps1'
+    OPERATOR_PATH = Exfuz::Util.wsl_to_windows(File.join(__dir__, './operator.ps1'))
     OPERATOR_CMD = "PowerShell.exe '$Input | #{OPERATOR_PATH}'"
 
     def initialize(positions)
@@ -19,7 +19,7 @@ module Exfuz
       result = nil
       IO.popen(OPERATOR_CMD, 'r+') do |io|
         io.puts JSON.unparse(data)
-        io.close
+        io.close_write
         result = io.read
       end
       result
