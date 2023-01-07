@@ -6,12 +6,12 @@ module Exfuz
   class Screen
     attr_reader :query
 
-    def initialize(status = nil, caret = nil, key_map = nil,
-                   candidates = nil)
+    def initialize(status = nil, key_map = nil, candidates = nil)
       @status = status
       @prev_loaded = @status.loaded
       @key_map = key_map
-      @query = Exfuz::Query.new(caret || [0, 0])
+      @prompt = '>'
+      @query = Exfuz::Query.new([0, @prompt.size])
       @cmd = Exfuz::FuzzyFinderCommand.new
       @candidates = candidates
       @conf = Exfuz::Configuration.instance
@@ -162,7 +162,7 @@ module Exfuz
     def print_head_line
       # 前回の入力内容を保持してないためクエリの全文字を再描画
       Curses.setpos(0, 0)
-      Curses.addstr(@query.line)
+      Curses.addstr(@prompt + @query.line)
 
       col = Curses.cols - status.size
       Curses.setpos(0, col)
