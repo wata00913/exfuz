@@ -86,8 +86,10 @@ module Exfuz
         filtered.positions[idx]
       end
 
-      jump = Exfuz::Jump.new(selected_positions)
-      jump.run
+      if Exfuz::Util.wsl?
+        jump = Exfuz::Jump.new(selected_positions)
+        jump.run
+      end
 
       Curses.clear
       init
