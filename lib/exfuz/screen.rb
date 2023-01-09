@@ -16,6 +16,9 @@ module Exfuz
       @candidates = candidates
       @conf = Exfuz::Configuration.instance
 
+      @description = Exfuz::Body.new(top: 1, bottom: 1, texts: ['please input query'])
+      @list = Exfuz::Body.new(top: 2)
+
       register_event
     end
 
@@ -91,6 +94,11 @@ module Exfuz
         jump.run
       end
 
+      texts = @cmd.selected.enum_for.with_index(0).each_with_object({}) do |(s, line_num), result|
+        result[line_num] = s
+      end
+      @list.change_all(texts)
+
       Curses.clear
       init
     end
@@ -154,6 +162,10 @@ module Exfuz
     def draw
       print_head_line
 
+      print_description
+
+      print_body
+
       reset_caret
     end
 
@@ -169,6 +181,23 @@ module Exfuz
       col = Curses.cols - status.size
       Curses.setpos(0, col)
       Curses.addstr(status)
+    end
+
+    def print_description
+      @description.lines.each do |row, line|
+        print_line(row: row, line: line)
+      end
+    end
+
+    def print_body
+      @list.lines(overwrite: true).each do |row, line|
+        print_line(row: row, line: line)
+      end
+    end
+
+    def print_line(row:, line:)
+      Curses.setpos(row, 0)
+      Curses.addstr(line)
     end
   end
 end
