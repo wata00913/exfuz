@@ -17,7 +17,7 @@ module Exfuz
       @conf = Exfuz::Configuration.instance
 
       @description = Exfuz::Body.new(top: 1, bottom: 1, texts: ['please input query'])
-      @list = Exfuz::Body.new(top: 2)
+      @list = Exfuz::Body.new(top: 2, bottom: 4)
 
       register_event
     end
@@ -94,10 +94,7 @@ module Exfuz
         jump.run
       end
 
-      texts = @cmd.selected.enum_for.with_index(0).each_with_object({}) do |(s, line_num), result|
-        result[line_num] = s
-      end
-      @list.change_all(texts)
+      @list.change_all(@cmd.selected)
 
       Curses.clear
       init
@@ -115,6 +112,16 @@ module Exfuz
 
     def move_right
       @query.right
+      refresh
+    end
+
+    def move_prev_page
+      @list.move_prev
+      refresh
+    end
+
+    def move_next_page
+      @list.move_next
       refresh
     end
 
@@ -153,6 +160,8 @@ module Exfuz
     def register_event
       @key_map.add_event_handler(Exfuz::Key::CTRL_R, self, func: :start_cmd)
       @key_map.add_event_handler(Exfuz::Key::CTRL_E, self, func: :finish)
+      @key_map.add_event_handler(Exfuz::Key::CTRL_L, self, func: :move_next_page)
+      @key_map.add_event_handler(Exfuz::Key::CTRL_H, self, func: :move_prev_page)
       @key_map.add_event_handler(Exfuz::Key::LEFT, self, func: :move_left)
       @key_map.add_event_handler(Exfuz::Key::RIGHT, self, func: :move_right)
       @key_map.add_event_handler(Exfuz::Key::BACKSPACE, self, func: :delete_char)

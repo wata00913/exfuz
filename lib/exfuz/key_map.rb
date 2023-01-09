@@ -27,6 +27,8 @@ module Exfuz
     CTRL_A = :ctrl_a
     CTRL_E = :ctrl_e
     CTRL_R = :ctrl_r
+    CTRL_H = :ctrl_h
+    CTRL_L = :ctrl_l
     ESC = :esc
     F1 = :f1
     F2 = :f2
@@ -71,6 +73,8 @@ module Exfuz
       27 => ESC,
       Curses::KEY_CTRL_E => CTRL_E,
       Curses::KEY_CTRL_R => CTRL_R,
+      Curses::KEY_CTRL_H => CTRL_H,
+      Curses::KEY_CTRL_L => CTRL_L,
       127 => BACKSPACE # 現状は開発環境の値に合わせる (127 or 263)
     }.freeze
 

@@ -5,13 +5,36 @@ module Exfuz
     def initialize(texts: [], top: 0, bottom: 10)
       @top = top
       @bottom = bottom
-      @texts = texts
+
       @prev_row_to_text = {}
 
       @size = bottom - top + 1
-      @row_to_text = @texts.slice(0, @size).each_with_index.each_with_object({}) do |(text, idx), result|
-        result[idx + @top] = text
+      @texts = init_texts(texts)
+      init_page(@texts, @size)
+    end
+
+    def move_next
+      return if @current_page == @max_page
+
+      @current_page += 1
+
+      offset = (@current_page - 1) * @size
+      next_texts = @texts.slice(offset, @size).each_with_index.each_with_object({}) do |(text, idx), result|
+        result[idx] = text
       end
+      change_some(next_texts)
+    end
+
+    def move_prev
+      return if @current_page == 1
+
+      @current_page -= 1
+
+      offset = (@current_page - 1) * @size
+      prev_texts = @texts.slice(offset, @size).each_with_index.each_with_object({}) do |(text, idx), result|
+        result[idx] = text
+      end
+      change_some(prev_texts)
     end
 
     def change(texts)
@@ -26,10 +49,9 @@ module Exfuz
     end
 
     def change_all(texts)
+      @texts = init_texts(texts)
       @prev_row_to_text = @row_to_text
-      @row_to_text = texts.each_with_object({}) do |(idx, text), result|
-        result[row(idx)] = text
-      end
+      init_page(texts, @size)
     end
 
     def lines(overwrite: false)
@@ -51,6 +73,18 @@ module Exfuz
 
     def row(idx)
       idx + @top
+    end
+
+    def init_texts(texts)
+      @texts = texts + [''] * (@size - (texts.size % @size))
+    end
+
+    def init_page(texts, size)
+      @max_page = texts.size.zero? ? 1 : (texts.size.to_f / size).ceil
+      @current_page = 1
+      @row_to_text = texts.slice(0, size).each_with_index.each_with_object({}) do |(text, idx), result|
+        result[row(idx)] = text
+      end
     end
 
     def overwrite(current:, prev:)
