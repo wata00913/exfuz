@@ -30,8 +30,7 @@ def main
   status = Exfuz::Status.new(xlsxs.size)
   candidates = Exfuz::Candidates.new
   key_map = Exfuz::KeyMap.new
-  caret = [0, 0]
-  screen = Exfuz::Screen.new(status, caret, key_map, candidates)
+  screen = Exfuz::Screen.new(status, key_map, candidates)
 
   screen.init
   Curses.close_screen

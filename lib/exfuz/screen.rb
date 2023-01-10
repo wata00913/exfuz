@@ -6,15 +6,18 @@ module Exfuz
   class Screen
     attr_reader :query
 
-    def initialize(status = nil, caret = nil, key_map = nil,
-                   candidates = nil)
+    def initialize(status = nil, key_map = nil, candidates = nil)
       @status = status
       @prev_loaded = @status.loaded
       @key_map = key_map
-      @query = Exfuz::Query.new(caret || [0, 0])
+      @prompt = '>'
+      @query = Exfuz::Query.new([0, @prompt.size])
       @cmd = Exfuz::FuzzyFinderCommand.new
       @candidates = candidates
       @conf = Exfuz::Configuration.instance
+
+      @description = Exfuz::Body.new(top: 1, bottom: 1, texts: ['please input query'])
+      @list = Exfuz::Body.new(top: 2, bottom: 4)
 
       register_event
     end
@@ -86,8 +89,12 @@ module Exfuz
         filtered.positions[idx]
       end
 
-      jump = Exfuz::Jump.new(selected_positions)
-      jump.run
+      if Exfuz::Util.wsl?
+        jump = Exfuz::Jump.new(selected_positions)
+        jump.run
+      end
+
+      @list.change_all(@cmd.selected)
 
       Curses.clear
       init
@@ -105,6 +112,16 @@ module Exfuz
 
     def move_right
       @query.right
+      refresh
+    end
+
+    def move_prev_page
+      @list.move_prev
+      refresh
+    end
+
+    def move_next_page
+      @list.move_next
       refresh
     end
 
@@ -143,6 +160,8 @@ module Exfuz
     def register_event
       @key_map.add_event_handler(Exfuz::Key::CTRL_R, self, func: :start_cmd)
       @key_map.add_event_handler(Exfuz::Key::CTRL_E, self, func: :finish)
+      @key_map.add_event_handler(Exfuz::Key::CTRL_L, self, func: :move_next_page)
+      @key_map.add_event_handler(Exfuz::Key::CTRL_H, self, func: :move_prev_page)
       @key_map.add_event_handler(Exfuz::Key::LEFT, self, func: :move_left)
       @key_map.add_event_handler(Exfuz::Key::RIGHT, self, func: :move_right)
       @key_map.add_event_handler(Exfuz::Key::BACKSPACE, self, func: :delete_char)
@@ -151,6 +170,10 @@ module Exfuz
 
     def draw
       print_head_line
+
+      print_description
+
+      print_body
 
       reset_caret
     end
@@ -162,11 +185,28 @@ module Exfuz
     def print_head_line
       # 前回の入力内容を保持してないためクエリの全文字を再描画
       Curses.setpos(0, 0)
-      Curses.addstr(@query.line)
+      Curses.addstr(@prompt + @query.line)
 
       col = Curses.cols - status.size
       Curses.setpos(0, col)
       Curses.addstr(status)
+    end
+
+    def print_description
+      @description.lines.each do |row, line|
+        print_line(row: row, line: line)
+      end
+    end
+
+    def print_body
+      @list.lines(overwrite: true).each do |row, line|
+        print_line(row: row, line: line)
+      end
+    end
+
+    def print_line(row:, line:)
+      Curses.setpos(row, 0)
+      Curses.addstr(line)
     end
   end
 end
