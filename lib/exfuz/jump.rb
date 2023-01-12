@@ -5,7 +5,8 @@ require 'json'
 module Exfuz
   class Jump
     OPERATOR_PATH = Exfuz::Util.wsl_to_windows(File.join(__dir__, './operator.ps1'))
-    OPERATOR_CMD = "PowerShell.exe '$Input | #{OPERATOR_PATH}'"
+    # powershellのホストから見て、wslがリモート扱いのためBypassを付与
+    OPERATOR_CMD = "PowerShell.exe -ExecutionPolicy Bypass '$Input | #{OPERATOR_PATH}'"
 
     def initialize(positions)
       @positions = positions
