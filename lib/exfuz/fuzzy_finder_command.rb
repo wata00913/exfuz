@@ -4,29 +4,28 @@ module Exfuz
   class FuzzyFinderCommand
     attr_reader :selected
 
-    def initialize
+    CMDS = { fzf: %w[fzf -m], peco: 'peco', percol: 'percol', sk: %w[sk -m] }.freeze
+
+    def initialize(command_type: :fzf)
       @selected = ''
+      @cmd = CMDS[command_type] || CMDS[:fzf]
     end
 
     def run
-      cmds = %w[fzf -m]
-
-      begin
-        stdio = IO.popen(cmds, 'r+')
-        fiber = Fiber.new do |init_line|
-          puts_line(stdio, init_line)
-          loop do
-            line = Fiber.yield
-            puts_line(stdio, line)
-          end
+      stdio = IO.popen(@cmd, 'r+')
+      fiber = Fiber.new do |init_line|
+        puts_line(stdio, init_line)
+        loop do
+          line = Fiber.yield
+          puts_line(stdio, line)
         end
-
-        yield fiber
-      ensure
-        stdio.close_write
-        @selected = stdio.each_line(chomp: true).to_a
-        stdio.close_read
       end
+
+      yield fiber
+    ensure
+      stdio.close_write
+      @selected = stdio.each_line(chomp: true).to_a
+      stdio.close_read
     end
 
     private

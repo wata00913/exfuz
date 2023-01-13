@@ -7,14 +7,15 @@ module Exfuz
     attr_reader :query
 
     def initialize(status = nil, key_map = nil, candidates = nil)
+      @conf = Exfuz::Configuration.instance
+
       @status = status
       @prev_loaded = @status.loaded
       @key_map = key_map
       @prompt = '>'
       @query = Exfuz::Query.new([0, @prompt.size])
-      @cmd = Exfuz::FuzzyFinderCommand.new
+      @cmd = Exfuz::FuzzyFinderCommand.new(command_type: @conf.fuzzy_finder_command_type)
       @candidates = candidates
-      @conf = Exfuz::Configuration.instance
 
       @description = Exfuz::Body.new(top: 1, bottom: 1, texts: ['please input query'])
       @list = Exfuz::Body.new(top: 2, bottom: 4)
@@ -89,7 +90,7 @@ module Exfuz
         filtered.positions[idx]
       end
 
-      if Exfuz::Util.wsl?
+      if Exfuz::Util.wsl? && @conf.jump_positions?
         jump = Exfuz::Jump.new(selected_positions)
         jump.run
       end

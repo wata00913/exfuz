@@ -36,6 +36,14 @@ module Exfuz
       @data[:split_new_line]
     end
 
+    def jump_positions?
+      @data[:jump_positions]
+    end
+
+    def fuzzy_finder_command_type
+      @data[:fuzzy_finder_command_type].to_sym
+    end
+
     private
 
     def set_data
@@ -69,7 +77,9 @@ module Exfuz
         book_name_path_type: :relative,
         cell_position_format: :index,
         line_sep: ':',
-        split_new_line: false
+        split_new_line: false,
+        jump_positions: false,
+        fuzzy_finder_command_type: 'fzf'
       }
     end
   end
