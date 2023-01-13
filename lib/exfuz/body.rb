@@ -2,6 +2,8 @@
 
 module Exfuz
   class Body
+    attr_reader :top, :bottom
+
     def initialize(texts: [], top: 0, bottom: 10)
       @top = top
       @bottom = bottom
@@ -67,6 +69,11 @@ module Exfuz
 
     def clear_prev
       @prev_row_to_text = {}
+    end
+
+    def bottom=(bottom)
+      @bottom = bottom
+      @size = @bottom - top + 1
     end
 
     private

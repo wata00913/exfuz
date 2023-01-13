@@ -33,6 +33,8 @@ module Exfuz
       Curses.noecho
       # 入力の待機時間(milliseconds)
       Curses.timeout = 100
+
+      @list.bottom = Curses.lines - @list.top + 1
       draw
       Curses.refresh
     end
