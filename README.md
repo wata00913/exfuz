@@ -1,35 +1,69 @@
-# Exfuz
+# exfuz
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/exfuz`. To experiment with that code, run `bin/console` for an interactive prompt.
+exfuz is able to fuzzy search for excel by using fuzzy finder tools such as fzf, peco
 
-TODO: Delete this and the text above, and describe your gem
+## Features
+
+- fuzzy search is possible for excel workbook, sheet, cells
+    - note: In the current version, exfuz cannot be used if the Ruby environment is Windows.
+- can jump to positions selected lines by fuzzy finder tools
+    - note: In the current version, the jump function is only available in wsl.
+
+## Demo
+https://user-images.githubusercontent.com/85052152/213947172-8917d9a8-1f88-42a2-9fc1-53c8de25e309.gif
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'exfuz'
+```sh
+gem install exfuz
 ```
 
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install exfuz
+Install the fuzzy finder tool.<sup>[1](#note1)</sup>
 
 ## Usage
 
-TODO: Write usage instructions here
+```sh
+exfuz start
+```
 
-## Development
+Sources to be searched are xlsx files under the current directory hierarchy.
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+## Key binding
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+| Key         | Description                             |
+|-------------|-----------------------------------------|
+| CTRL-R      | Launch Fuzzy Finder tool                |
+| CTRL-E      | Stop exfuz                              |
+| CTRL-H      | Back to previous page of selection list |
+| CTRL-L      | Go to next page of selection list       |
+| Right Arrow | Move Query cursor to right              |
+| Left Arrow  | Move Query cursor to left               |
+| BACKSPACE   | Delete one character in Query           |
 
-## Contributing
+## Options
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/exfuz.
+Setting file is `.exfuz.json` . 
+
+The priority for reading the configuration is as follows.
+
+1. `./.exfuz.json`
+2. `~/.config/exfuz/.exfuz.json`
+3. Default settings
+
+| Option                    | Values / Default Value                                                            | Description                                                                  |
+|---------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| book_name_path_type       | [”relative”, “absolute”] </br> Default Value: "relative"                          | Format to display book name. </br> relative path or absolute path.           |
+| cell_position_format      | [”index”, “address”] </br> Default Value: "address"                               | Format to display cell position </br> ex) index: $3$4, address: $C$4         |
+| line_sep                  | Arbitary character </br> Default Value: ":"                                       | Delimiter char </br> ex) book1.xlsx:sheet1:$A$1:value if delimiter char is : |
+| split_new_line            | [true, false] </br> Default Value: false                                          | Whether to escape line breaks in cells                                       |
+| fuzzy_finder_command_type | ["fzf", "peco", "percol", "sk"]<sup>[1](#note1)</sup>  </br> Default Value: "fzf" | Which fuzzy finder tool to use                                               |
+<large id="note1"> note:The fuzzy finder tool selected in the options must be installed.
+
+- fzf: [fzf](https://github.com/junegunn/fzf)
+- peco: [peco](https://github.com/peco/peco)
+- percol:[percol](https://github.com/mooz/percol)
+- sk: [skim](https://github.com/lotabout/skim)
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT)
