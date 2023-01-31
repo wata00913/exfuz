@@ -70,13 +70,17 @@ The priority for reading the configuration is as follows.
 2. `~/.config/exfuz/.exfuz.json`
 3. Default settings
 
-| Option                    | Values / Default Value                                                            | Description                                                                  |
-|---------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| book_name_path_type       | [”relative”, “absolute”] </br> Default Value: "relative"                          | Format to display book name. </br> relative path or absolute path.           |
-| cell_position_format      | [”index”, “address”] </br> Default Value: "address"                               | Format to display cell position </br> ex) index: $3$4, address: $C$4         |
-| line_sep                  | Arbitary character </br> Default Value: ":"                                       | Delimiter char </br> ex) book1.xlsx:sheet1:$A$1:value if delimiter char is : |
-| split_new_line            | [true, false] </br> Default Value: false                                          | Whether to escape line breaks in cells                                       |
+| Option                    | Values / Default Value                                          | Description                                                                  |
+|---------------------------|-----------------------------------------------------------------|------------------------------------------------------------------------------|
+| book_name_path_type       | [”relative”, “absolute”] </br> Default Value: "relative"        | Format to display book name. </br> relative path or absolute path.           |
+| cell_position_format      | [”index”, “address”] </br> Default Value: "address"             | Format to display cell position </br> ex) index: $3$4, address: $C$4         |
+| line_sep                  | Arbitary character </br> Default Value: ":"                     | Delimiter char </br> ex) book1.xlsx:sheet1:$A$1:value if delimiter char is : |
+| split_new_line            | [true, false] </br> Default Value: false                        | Whether to escape line breaks in cells                                       |
+| jump_positions            | [true, false] </br> Default Value: false                        | Whether to jump to the selected item[^jump_note]
 | fuzzy_finder_command_type | ["fzf", "peco", "percol", "sk"][^2]  </br> Default Value: "fzf" | Which fuzzy finder tool to use                                               |
+
+[^jump_note]:In the current version, the jump function is only available in wsl.
+
 [^2]: Value to fuzzy finder tool is as followeds.   </br>
 ・"fzf": fzf</br>
 ・"peco": peco</br>
