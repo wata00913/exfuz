@@ -10,13 +10,15 @@ exfuz is able to fuzzy search for excel by using fuzzy finder tools such as fzf,
     - note: In the current version, the jump function is only available in wsl.
 
 ## Demo
-
+https://user-images.githubusercontent.com/85052152/213947172-8917d9a8-1f88-42a2-9fc1-53c8de25e309.gif
 
 ## Installation
 
 ```sh
 gem install exfuz
 ```
+
+Install the fuzzy finder tool.<sup>[1](#note1)</sup>
 
 ## Usage
 
@@ -46,14 +48,21 @@ The priority for reading the configuration is as follows.
 
 1. `./.exfuz.json`
 2. `~/.config/exfuz/.exfuz.json`
-3. default settings
+3. Default settings
 
-| option               | Values / Default Value                                 | Description                                                                  |
-|----------------------|--------------------------------------------------------|------------------------------------------------------------------------------|
-| book_name_path_type  | [”relative”, “absolute”] </br> Default Value: relative | Format to display book name. </br> relative path or absolute path.           |
-| cell_position_format | [”index”, “address”] </br> Default Value: address      | Format to display cell position </br> ex) index: $3$4, address: $C$4         |
-| line_sep             | Arbitary character                                     | Delimiter char </br> ex) book1.xlsx:sheet1:$A$1:value if delimiter char is : |
-| split_new_line       | [true, false] </br> Default Value: false               | Whether to escape line breaks in cells                                       |
+| Option                    | Values / Default Value                                                            | Description                                                                  |
+|---------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| book_name_path_type       | [”relative”, “absolute”] </br> Default Value: "relative"                          | Format to display book name. </br> relative path or absolute path.           |
+| cell_position_format      | [”index”, “address”] </br> Default Value: "address"                               | Format to display cell position </br> ex) index: $3$4, address: $C$4         |
+| line_sep                  | Arbitary character </br> Default Value: ":"                                       | Delimiter char </br> ex) book1.xlsx:sheet1:$A$1:value if delimiter char is : |
+| split_new_line            | [true, false] </br> Default Value: false                                          | Whether to escape line breaks in cells                                       |
+| fuzzy_finder_command_type | ["fzf", "peco", "percol", "sk"]<sup>[1](#note1)</sup>  </br> Default Value: "fzf" | Which fuzzy finder tool to use                                               |
+<large id="note1"> note:The fuzzy finder tool selected in the options must be installed.
+
+- fzf: [fzf](https://github.com/junegunn/fzf)
+- peco: [peco](https://github.com/peco/peco)
+- percol:[percol](https://github.com/mooz/percol)
+- sk: [skim](https://github.com/lotabout/skim)
 
 ## License
 
